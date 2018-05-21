@@ -1,0 +1,269 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>dummyserial.classes &#8212; dummyserial 1.00 documentation</title>
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for dummyserial.classes</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Dummy Serial Class Definitions&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">logging.handlers</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">serial.serialutil</span> <span class="k">import</span> <span class="n">SerialException</span><span class="p">,</span> <span class="n">portNotOpenError</span>
+
+<span class="kn">import</span> <span class="nn">dummyserial.constants</span>
+
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Greg Albrecht &lt;gba@orionlabs.io&gt;&#39;</span>
+<span class="n">__license__</span> <span class="o">=</span> <span class="s1">&#39;Apache License, Version 2.0&#39;</span>
+<span class="n">__copyright__</span> <span class="o">=</span> <span class="s1">&#39;Copyright 2016 Orion Labs, Inc.&#39;</span>
+
+
+<div class="viewcode-block" id="Serial"><a class="viewcode-back" href="../../index.html#dummyserial.Serial">[docs]</a><span class="k">class</span> <span class="nc">Serial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dummy (mock) serial port for testing purposes.</span>
+
+<span class="sd">    Mimics the behavior of a serial port as defined by the</span>
+<span class="sd">    `pySerial &lt;http://pyserial.sourceforge.net/&gt;`_ module.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        * port:</span>
+<span class="sd">        * timeout:</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">    As the portname argument not is used properly, only one port on</span>
+<span class="sd">    :mod:`dummyserial` can be used simultaneously.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_logger</span><span class="o">.</span><span class="n">handlers</span><span class="p">:</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">LOG_LEVEL</span><span class="p">)</span>
+        <span class="n">_console_handler</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">StreamHandler</span><span class="p">()</span>
+        <span class="n">_console_handler</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">LOG_LEVEL</span><span class="p">)</span>
+        <span class="n">_console_handler</span><span class="o">.</span><span class="n">setFormatter</span><span class="p">(</span><span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">LOG_FORMAT</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">_console_handler</span><span class="p">)</span>
+        <span class="n">_logger</span><span class="o">.</span><span class="n">propagate</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;args=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;kwargs=</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># pylint: disable=C0103</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">=</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">NO_DATA_PRESENT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;port&#39;</span><span class="p">]</span>  <span class="c1"># Serial port name.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_port_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">port</span>  <span class="c1"># Initial name given to the port</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ds_responses</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;ds_responses&#39;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;timeout&#39;</span><span class="p">,</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_TIMEOUT</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">baudrate</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="s1">&#39;baudrate&#39;</span><span class="p">,</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_BAUDRATE</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;String representation of the DummySerial object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">.</span><span class="si">{1}</span><span class="s2">&lt;id=0x</span><span class="si">{2:x}</span><span class="s2">, open=</span><span class="si">{3}</span><span class="s2">&gt;(port=</span><span class="si">{4!r}</span><span class="s2">, timeout=</span><span class="si">{5!r}</span><span class="s2">, &quot;</span>
+            <span class="s2">&quot;waiting_data=</span><span class="si">{6!r}</span><span class="s2">)&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__module__</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+                <span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">port</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Serial.open"><a class="viewcode-back" href="../../index.html#dummyserial.Serial.open">[docs]</a>    <span class="k">def</span> <span class="nf">open</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Open a (previously initialized) port.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Opening port&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">SerialException</span><span class="p">(</span><span class="s1">&#39;Port is already open.&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_port_name</span></div>
+
+<div class="viewcode-block" id="Serial.close"><a class="viewcode-back" href="../../index.html#dummyserial.Serial.close">[docs]</a>    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close a port on dummy_serial.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Closing port&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">port</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="Serial.write"><a class="viewcode-back" href="../../index.html#dummyserial.Serial.write">[docs]</a>    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write to a port on dummy_serial.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data (string/bytes): data for sending to the port on</span>
+<span class="sd">            dummy_serial. Will affect the response for subsequent read</span>
+<span class="sd">            operations.</span>
+
+<span class="sd">        Note that for Python2, the inputdata should be a **string**. For</span>
+<span class="sd">        Python3 it should be of type **bytes**.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Writing (</span><span class="si">%s</span><span class="s1">): &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">data</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">portNotOpenError</span>
+
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DSTypeError</span><span class="p">(</span>
+                    <span class="s1">&#39;The input must be type bytes. Given:&#39;</span> <span class="o">+</span> <span class="nb">repr</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="n">input_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">input_str</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># Look up which data that should be waiting for subsequent read</span>
+        <span class="c1"># commands.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ds_responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="n">input_str</span><span class="p">,</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">NO_DATA_PRESENT</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Serial.read"><a class="viewcode-back" href="../../index.html#dummyserial.Serial.read">[docs]</a>    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Read size bytes from the Dummy Serial Responses.</span>
+
+<span class="sd">        The response is dependent on what was written last to the port on</span>
+<span class="sd">        dummyserial, and what is defined in the :data:`RESPONSES` dictionary.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            size (int): For compability with the real function.</span>
+
+<span class="sd">        Returns a **string** for Python2 and **bytes** for Python3.</span>
+
+<span class="sd">        If the response is shorter than size, it will sleep for timeout.</span>
+
+<span class="sd">        If the response is longer than size, it will return only size bytes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Reading </span><span class="si">%s</span><span class="s1"> bytes.&#39;</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_isOpen</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">portNotOpenError</span>
+
+        <span class="k">if</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">DSIOError</span><span class="p">(</span>
+                <span class="s1">&#39;The size to read must not be negative. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Given: </span><span class="si">{!r}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">size</span><span class="p">))</span>
+
+        <span class="c1"># Do the actual reading from the waiting data, and simulate the</span>
+        <span class="c1"># influence of size.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">==</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">DEFAULT_RESPONSE</span><span class="p">:</span>
+            <span class="n">return_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">):</span>
+            <span class="n">return_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">=</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">NO_DATA_PRESENT</span>
+        <span class="k">elif</span> <span class="n">size</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;The size (</span><span class="si">%s</span><span class="s1">) to read is smaller than the available data. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Some bytes will be kept for later. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Available (</span><span class="si">%s</span><span class="s1">): &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+                <span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span>
+            <span class="p">)</span>
+
+            <span class="n">return_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">[:</span><span class="n">size</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">[</span><span class="n">size</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Wait for timeout - we asked for more data than available!</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+                <span class="s1">&#39;The size (</span><span class="si">%s</span><span class="s1">) to read is larger than the available data. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Will sleep until timeout. &#39;</span> <span class="o">+</span>
+                <span class="s1">&#39;Available (</span><span class="si">%s</span><span class="s1">): &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+                <span class="n">size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span>
+            <span class="p">)</span>
+
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timeout</span><span class="p">)</span>
+            <span class="n">return_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span> <span class="o">=</span> <span class="n">dummyserial</span><span class="o">.</span><span class="n">constants</span><span class="o">.</span><span class="n">NO_DATA_PRESENT</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s1">&#39;Read (</span><span class="si">%s</span><span class="s1">): &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="n">return_str</span><span class="p">),</span> <span class="n">return_str</span>
+        <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Convert types to make it python3 compat.</span>
+            <span class="k">return</span> <span class="nb">bytes</span><span class="p">(</span><span class="n">return_str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;latin1&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">return_str</span></div>
+
+<div class="viewcode-block" id="Serial.out_waiting"><a class="viewcode-back" href="../../index.html#dummyserial.Serial.out_waiting">[docs]</a>    <span class="k">def</span> <span class="nf">out_waiting</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># pylint: disable=C0103</span>
+        <span class="sd">&quot;&quot;&quot;Returns length of waiting output data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_waiting_data</span><span class="p">)</span></div>
+
+    <span class="n">outWaiting</span> <span class="o">=</span> <span class="n">out_waiting</span>  <span class="c1"># pyserial 2.7 / 3.0 compat.</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, orion.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

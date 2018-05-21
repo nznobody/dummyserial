@@ -1,136 +1,110 @@
 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
-<!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Welcome to Dummy Serial’s documentation! &mdash; Dummy Serial 0.0.1 documentation</title>
-  
-
-  
-  
-
-  
-
-  
-  
-    
-
-  
-
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Welcome to dummyserial’s documentation! &#8212; dummyserial 1.00 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
   
   
-    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
   
 
-  
-
-  
-    <link rel="top" title="Dummy Serial 0.0.1 documentation" href="#"/> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
-</head>
-
-<body class="wy-body-for-nav" role="document">
-
-  <div class="wy-grid-for-nav">
-
-    
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
-          
-
-          
-            <a href="#" class="icon icon-home"> Dummy Serial
-          
-
-          
-          </a>
-
-          
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
             
-            
-              <div class="version">
-                0.0.1
-              </div>
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-                <ul class="simple">
-</ul>
-
-            
-          
-        </div>
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
-        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-        <a href="#">Dummy Serial</a>
-      </nav>
-
-
-      
-      <div class="wy-nav-content">
-        <div class="rst-content">
-          
-
- 
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-  <ul class="wy-breadcrumbs">
-    <li><a href="#">Docs</a> &raquo;</li>
-      
-    <li>Welcome to Dummy Serial&#8217;s documentation!</li>
-      <li class="wy-breadcrumbs-aside">
-        
-          
-            <a href="_sources/index.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-  </ul>
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-            
-  <div class="section" id="welcome-to-dummy-serial-s-documentation">
-<h1>Welcome to Dummy Serial&#8217;s documentation!<a class="headerlink" href="#welcome-to-dummy-serial-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+  <div class="section" id="welcome-to-dummyserial-s-documentation">
+<h1>Welcome to dummyserial’s documentation!<a class="headerlink" href="#welcome-to-dummyserial-s-documentation" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
-<ul class="simple">
-</ul>
 </div>
+<dl class="class">
+<dt id="dummyserial.Serial">
+<em class="property">class </em><code class="descclassname">dummyserial.</code><code class="descname">Serial</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dummy (mock) serial port for testing purposes.</p>
+<p>Mimics the behavior of a serial port as defined by the
+<a class="reference external" href="http://pyserial.sourceforge.net/">pySerial</a> module.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd><ul class="first last simple">
+<li>port:</li>
+<li>timeout:</li>
+</ul>
+</dd>
+</dl>
+<p>Note:
+As the portname argument not is used properly, only one port on
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">dummyserial</span></code> can be used simultaneously.</p>
+<dl class="method">
+<dt id="dummyserial.Serial.close">
+<code class="descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial.close"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close a port on dummy_serial.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dummyserial.Serial.open">
+<code class="descname">open</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial.open"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial.open" title="Permalink to this definition">¶</a></dt>
+<dd><p>Open a (previously initialized) port.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dummyserial.Serial.outWaiting">
+<code class="descname">outWaiting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#dummyserial.Serial.outWaiting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns length of waiting output data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dummyserial.Serial.out_waiting">
+<code class="descname">out_waiting</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial.out_waiting"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial.out_waiting" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns length of waiting output data.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dummyserial.Serial.read">
+<code class="descname">read</code><span class="sig-paren">(</span><em>size=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial.read"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read size bytes from the Dummy Serial Responses.</p>
+<p>The response is dependent on what was written last to the port on
+dummyserial, and what is defined in the <code class="xref py py-data docutils literal notranslate"><span class="pre">RESPONSES</span></code> dictionary.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>size (int): For compability with the real function.</dd>
+</dl>
+<p>Returns a <strong>string</strong> for Python2 and <strong>bytes</strong> for Python3.</p>
+<p>If the response is shorter than size, it will sleep for timeout.</p>
+<p>If the response is longer than size, it will return only size bytes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="dummyserial.Serial.write">
+<code class="descname">write</code><span class="sig-paren">(</span><em>data</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/dummyserial/classes.html#Serial.write"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#dummyserial.Serial.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write to a port on dummy_serial.</p>
+<dl class="docutils">
+<dt>Args:</dt>
+<dd>data (string/bytes): data for sending to the port on
+dummy_serial. Will affect the response for subsequent read
+operations.</dd>
+</dl>
+<p>Note that for Python2, the inputdata should be a <strong>string</strong>. For
+Python3 it should be of type <strong>bytes</strong>.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -142,63 +116,60 @@
 </div>
 
 
-           </div>
           </div>
-          <footer>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        &copy; Copyright Copyright 2016 Orion Labs, Inc..
-      Last updated on 2016-04-29 22:01 GMT+00:00 (%z).
-
-    </p>
-  </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
         </div>
       </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Welcome to dummyserial’s documentation!</a></li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, orion.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.7.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
 
-    </section>
+    
 
-  </div>
-  
-
-
-  
-
-    <script type="text/javascript">
-        var DOCUMENTATION_OPTIONS = {
-            URL_ROOT:'./',
-            VERSION:'0.0.1',
-            COLLAPSE_INDEX:false,
-            FILE_SUFFIX:'.html',
-            HAS_SOURCE:  true
-        };
-    </script>
-      <script type="text/javascript" src="_static/jquery.js"></script>
-      <script type="text/javascript" src="_static/underscore.js"></script>
-      <script type="text/javascript" src="_static/doctools.js"></script>
-
-  
-
-  
-  
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-  
-
-  
-  
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.StickyNav.enable();
-      });
-  </script>
-   
-
-</body>
+    
+  </body>
 </html>
