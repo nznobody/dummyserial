@@ -24,9 +24,11 @@ class Serial(object):
     Mimics the behavior of a serial port as defined by the
     `pySerial <http://pyserial.sourceforge.net/>`_ module.
 
-    Args:
-        * port:
-        * timeout:
+    Attributes:
+        ** port(str): Serial port
+        ** timeout(int): Timeout in seconds (Default 2 seconds)
+        ** responses(dict): Dictionary of response strings or method
+        ** baudrate(integer): Baudrate (Default is 9600)
 
     Note:
     As the portname argument not is used properly, only one port on
@@ -52,7 +54,7 @@ class Serial(object):
         self.port = kwargs['port']  # Serial port name.
         self.initial_port_name = self.port  # Initial name given to the port
 
-        self.ds_responses = kwargs.get('ds_responses', {})
+        self.responses = kwargs.get('responses', {})
         self.timeout = kwargs.get(
             'timeout', dummyserial.constants.DEFAULT_TIMEOUT)
         self.baudrate = kwargs.get(
@@ -117,8 +119,7 @@ class Serial(object):
 
         # Look up which data that should be waiting for subsequent read
         # commands.
-        self._waiting_data = self.ds_responses.get(
-            input_str, dummyserial.constants.NO_DATA_PRESENT)
+        self._waiting_data = self._check_response(input_str)
 
     def read(self, size=1):
         """
@@ -188,5 +189,14 @@ class Serial(object):
     def out_waiting(self):  # pylint: disable=C0103
         """Returns length of waiting output data."""
         return len(self._waiting_data)
+
+    def _check_response(self, input_str):
+        '''Check repsonses'''
+        temporary  = self.responses.get(input_str, 
+                                           dummyserial.constants.NO_DATA_PRESENT)
+        if callable(temporary):
+            return temporary(input_str)
+        else:
+            return temporary
 
     outWaiting = out_waiting  # pyserial 2.7 / 3.0 compat.

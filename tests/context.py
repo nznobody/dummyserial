@@ -8,7 +8,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath('..'))
 
-import dummyserial  # NOQA pylint: disable=W0611
+# import dummyserial  # NOQA pylint: disable=W0611
 
 __author__ = 'Greg Albrecht <gba@orionlabs.io>'
 __license__ = 'Apache License, Version 2.0'

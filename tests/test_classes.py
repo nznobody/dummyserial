@@ -10,13 +10,16 @@ import logging.handlers
 
 from serial.serialutil import SerialException
 
-from . import constants
-from .context import dummyserial
+import constants
+import dummyserial
 
 __author__ = 'Greg Albrecht <gba@orionlabs.io>'
 __license__ = 'Apache License, Version 2.0'
 __copyright__ = 'Copyright 2016 Orion Labs, Inc.'
 
+
+def dummy_method(x):
+    return x
 
 class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
     """Tests for Dummy Serial."""
@@ -41,7 +44,7 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         :type alphabet: str
         """
         alphabet = alphabet or constants.ALPHANUM
-        return ''.join(random.choice(alphabet) for _ in xrange(length))
+        return ''.join(random.choice(alphabet) for _ in range(length))
 
     def setUp(self):  # pylint: disable=C0103
         """
@@ -59,7 +62,7 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         )
 
     def test_write_and_read(self):
-        """Tests writing-to and reading-from a Dummy Serial port."""
+        """Tests writing-to and reading-from a Dummy Serial port (just strings)"""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
         rand_write_str1 = self.random(rand_write_len1)
@@ -81,6 +84,22 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
                 break
 
         self.assertEqual(read_data, rand_write_str2)
+    
+
+    def test_dummy_methods(self):
+        """Tests writing-to and reading-from a Dummy Serial port (functions)"""
+
+        ds_instance = dummyserial.Serial(
+            port=self.random_serial_port,
+            baudrate=self.random_baudrate,
+            ds_responses={'test': dummy_method}
+        )
+
+        ds_instance.write('test')
+        read_data = ''
+        read_data = ''.join([read_data, ds_instance.read(4)])
+        self.assertEqual(read_data, 'test')
+
 
     def test_write_closed_port(self):
         """Tests writing-to a closed Dummy Serial port."""
