@@ -9,13 +9,17 @@ import logging
 import logging.handlers
 
 from serial.serialutil import SerialException
-
-import constants
 import dummyserial
 
 __author__ = 'Greg Albrecht <gba@orionlabs.io>'
 __license__ = 'Apache License, Version 2.0'
 __copyright__ = 'Copyright 2016 Orion Labs, Inc.'
+
+#Constants
+ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+NUMBERS = '0123456789'
+POSITIVE_NUMBERS = NUMBERS[1:]
+ALPHANUM = ''.join([ALPHABET, NUMBERS])
 
 
 def dummy_method(x):
@@ -43,8 +47,9 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         :type length: int
         :type alphabet: str
         """
-        alphabet = alphabet or constants.ALPHANUM
+        alphabet = alphabet or ALPHANUM
         return ''.join(random.choice(alphabet) for _ in range(length))
+        
 
     def setUp(self):  # pylint: disable=C0103
         """
@@ -54,7 +59,7 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         2) Creates a random baud rate.
         """
         self.random_serial_port = self.random()
-        self.random_baudrate = self.random(5, constants.NUMBERS)
+        self.random_baudrate = self.random(5,NUMBERS)
         self._logger.debug(
             'random_serial_port=%s random_baudrate=%s',
             self.random_serial_port,
@@ -65,8 +70,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests writing-to and reading-from a Dummy Serial port (just strings)"""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -95,7 +100,7 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
             ds_responses={'test': dummy_method}
         )
 
-        ds_instance.write('test')
+        ds_instance.write(b'test')
         read_data = ''
         read_data = ''.join([read_data, ds_instance.read(4)])
         self.assertEqual(read_data, 'test')
@@ -105,8 +110,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests writing-to a closed Dummy Serial port."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -125,8 +130,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests writing-to and reading-from a closed Dummy Serial port."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -146,8 +151,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests describing a Dummy Serial port."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -161,8 +166,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests opening an already-open Dummy Serial port."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -182,8 +187,8 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests closing a Dummy Serial port."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
-        rand_write_str2 = self.random(rand_write_len2)
+        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_str2 = self.random(rand_write_len2).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -199,7 +204,7 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         """Tests writing and reading with an unspecified response."""
         rand_write_len1 = random.randint(0, 1024)
         rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1)
+        rand_write_str1 = self.random(rand_write_len1).encode()
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
