@@ -151,9 +151,6 @@ class Serial(object):
         # influence of size.
         if self._waiting_data == dummyserial.constants.DEFAULT_RESPONSE:
             return_str = self._waiting_data
-        elif size == len(self._waiting_data):
-            return_str = self._waiting_data
-            self._waiting_data = dummyserial.constants.NO_DATA_PRESENT
         elif size < len(self._waiting_data):
             self._logger.debug(
                 'The size (%s) to read is smaller than the available data. ' +
@@ -164,6 +161,9 @@ class Serial(object):
 
             return_str = self._waiting_data[:size]
             self._waiting_data = self._waiting_data[size:]
+        elif size == len(self._waiting_data):
+            return_str = self._waiting_data
+            self._waiting_data = dummyserial.constants.NO_DATA_PRESENT
         else:  # Wait for timeout - we asked for more data than available!
             self._logger.debug(
                 'The size (%s) to read is larger than the available data. ' +
@@ -181,7 +181,7 @@ class Serial(object):
             len(return_str), return_str
         )
 
-        if sys.version_info[0] > 2:  # Convert types to make it python3 compat.
+        if sys.version_info[0] > 2 and type(return_str) != bytes:  # Convert types to make it python3 compat.
             return bytes(return_str, encoding='latin1')
         else:
             return return_str
@@ -192,8 +192,8 @@ class Serial(object):
 
     def _check_response(self, input_str):
         '''Check repsonses'''
-        temporary  = self.responses.get(input_str, 
-                                           dummyserial.constants.NO_DATA_PRESENT)
+        temporary  = self.responses.get(input_str.encode(), 
+                                        dummyserial.constants.NO_DATA_PRESENT)
         if callable(temporary):
             return temporary(input_str)
         else:
