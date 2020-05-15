@@ -81,7 +81,6 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
        
         ds_instance.write(rand_write_str1)
         read_data = b''
-        import pdb;pdb.set_trace()
         while 1:
             read_data = b''.join([read_data, ds_instance.read(rand_write_len2)])
             waiting_data = ds_instance.outWaiting()
