@@ -102,24 +102,23 @@ class Serial(object):
             operations.
 
         Note that for Python2, the inputdata should be a **string**. For
-        Python3 it should be of type **bytes**.
+        Python3 it should be of type **bytes** or **bytearray**.
         """
-        self._logger.debug('Writing (%s): "%s"', len(data), data)
+        
+        if isinstance(data, bytearray):
+            data = bytes(data)
+
+        self._logger.debug('type(data): %s', type(data))
+        if sys.version_info[0] > 2 and not isinstance(data, bytes):
+            self._logger.debug('Writing str(%s): "%s"', len(data), data)
+        else:
+            self._logger.debug('Writing bytes(%s): %s', len(data), self._ashex(data))
 
         if not self._isOpen:
             raise portNotOpenError
 
-        if sys.version_info[0] > 2:
-            if not isinstance(data, bytes):
-                raise dummyserial.exceptions.DSTypeError(
-                    'The input must be type bytes. Given:' + repr(data))
-            input_str = str(data, encoding='latin1')
-        else:
-            input_str = data
-
-        # Look up which data that should be waiting for subsequent read
-        # commands.
-        self._waiting_data = self._check_response(input_str)
+        self._waiting_data = self._check_response(data)
+        return
 
     def read(self, size=1):
         """
@@ -150,7 +149,7 @@ class Serial(object):
         # Do the actual reading from the waiting data, and simulate the
         # influence of size.
         if self._waiting_data == dummyserial.constants.DEFAULT_RESPONSE:
-            return_str = self._waiting_data
+            data_out = self._waiting_data
         elif size < len(self._waiting_data):
             self._logger.debug(
                 'The size (%s) to read is smaller than the available data. ' +
@@ -159,10 +158,10 @@ class Serial(object):
                 size, len(self._waiting_data), self._waiting_data
             )
 
-            return_str = self._waiting_data[:size]
+            data_out = self._waiting_data[:size]
             self._waiting_data = self._waiting_data[size:]
         elif size == len(self._waiting_data):
-            return_str = self._waiting_data
+            data_out = self._waiting_data
             self._waiting_data = dummyserial.constants.NO_DATA_PRESENT
         else:  # Wait for timeout - we asked for more data than available!
             self._logger.debug(
@@ -173,30 +172,35 @@ class Serial(object):
             )
 
             time.sleep(self.timeout)
-            return_str = self._waiting_data
+            data_out = self._waiting_data
             self._waiting_data = dummyserial.constants.NO_DATA_PRESENT
 
         self._logger.debug(
             'Read (%s): "%s"',
-            len(return_str), return_str
+            len(data_out), data_out
         )
 
-        if sys.version_info[0] > 2 and type(return_str) != bytes:  # Convert types to make it python3 compat.
-            return bytes(return_str, encoding='latin1')
-        else:
-            return return_str
+        # if sys.version_info[0] > 2 and not isinstance(data_out, bytes):  # Convert types to make it python3 compat.
+        #     return bytes(data_out, encoding='latin1')
+        # else:
+        return data_out
 
-    def out_waiting(self):  # pylint: disable=C0103
-        """Returns length of waiting output data."""
+    def inWaiting(self):  # pylint: disable=C0103
+        """Returns length of waiting output data. pyserial 2.7 method"""
         return len(self._waiting_data)
 
-    def _check_response(self, input_str):
-        '''Check repsonses'''
-        temporary  = self.responses.get(input_str.encode(), 
-                                        dummyserial.constants.NO_DATA_PRESENT)
-        if callable(temporary):
-            return temporary(input_str)
-        else:
-            return temporary
+    @property
+    def in_waiting(self):    
+        return self.inWaiting()
 
-    outWaiting = out_waiting  # pyserial 2.7 / 3.0 compat.
+    def _check_response(self, data_in):
+
+        data_out = dummyserial.constants.NO_DATA_PRESENT
+        if data_in in self.responses:
+            data_out = self.responses[data_in]
+
+        return data_out
+
+    def _ashex(self, msg):
+        return " ".join(["{:02X}".format(x) for x in msg])
+

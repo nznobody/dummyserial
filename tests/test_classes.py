@@ -83,27 +83,12 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         read_data = b''
         while 1:
             read_data = b''.join([read_data, ds_instance.read(rand_write_len2)])
-            waiting_data = ds_instance.outWaiting()
+            waiting_data = ds_instance.inWaiting()
             if not waiting_data:
                 break
 
         self.assertEqual(read_data, rand_write_str2)
     
-
-    def test_dummy_methods(self):
-        """Tests writing-to and reading-from a Dummy Serial port (functions)"""
-        rand_write_len1 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1).encode()
-        ds_instance = dummyserial.Serial(
-            port=self.random_serial_port,
-            baudrate=self.random_baudrate,
-            responses={rand_write_str1: dummy_method}
-        )
-        ds_instance.write(rand_write_str1)
-        read_data = b''
-        read_data = b''.join([read_data, ds_instance.read(rand_write_len1)])
-        self.assertEqual(read_data, rand_write_str1)
-
 
     def test_write_closed_port(self):
         """Tests writing-to a closed Dummy Serial port."""
@@ -201,9 +186,9 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
 
     def test_write_and_read_no_data_present(self):  # pylint: disable=C0103
         """Tests writing and reading with an unspecified response."""
-        rand_write_len1 = random.randint(0, 1024)
-        rand_write_len2 = random.randint(0, 1024)
-        rand_write_str1 = self.random(rand_write_len1).encode()
+        rand_write_len1 = random.randint(256, 1024)
+        rand_read_len2 = random.randint(1, 16) # give it some order of magnitudes less
+        rand_write_str1 = self.random(rand_write_len1)
 
         ds_instance = dummyserial.Serial(
             port=self.random_serial_port,
@@ -211,17 +196,16 @@ class DummySerialTest(unittest.TestCase):  # pylint: disable=R0904
         )
 
         ds_instance.write(rand_write_str1)
-
-        read_data = b''
+        
+        
         while 1:
-            read_data = b''.join([read_data, ds_instance.read(rand_write_len2)])
-            waiting_data = ds_instance.outWaiting()
-            if not waiting_data:
+            ds_instance.read(rand_read_len2) # discard this data
+            if not ds_instance.inWaiting():
+                empty_data = ds_instance.read(rand_read_len2)
                 break
 
-        read_data = read_data.decode("utf-8")
         self.assertEqual(
-            dummyserial.constants.NO_DATA_PRESENT, read_data)
+            dummyserial.constants.NO_DATA_PRESENT, empty_data)
 
 
 if __name__ == '__main__':
